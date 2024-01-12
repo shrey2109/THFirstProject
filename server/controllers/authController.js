@@ -1,6 +1,6 @@
-const { PrismaClient } = require("@prisma/client");
-const { hashedPassword, comparePassword } = require("../helper/authHelper");
-const JWT = require("jsonwebtoken");
+import { PrismaClient } from "@prisma/client";
+import { hashedPassword, comparePassword } from "../helper/authHelper";
+import { sign } from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -97,7 +97,8 @@ const loginController = async (req, res) => {
       res.send({ message: "Incorrect Password" });
     }
 
-    const token = await JWT.sign(existingUser, process.env.SECRET_KEY, {
+    // eslint-disable-next-line no-undef
+    const token = await sign(existingUser, process.env.SECRET_KEY, {
       expiresIn: "7d",
     });
 
@@ -112,4 +113,4 @@ const loginController = async (req, res) => {
   }
 };
 
-module.exports = { allUserInfoController, registerController, loginController };
+export default { allUserInfoController, registerController, loginController };

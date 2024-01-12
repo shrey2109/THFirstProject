@@ -1,12 +1,10 @@
-const JWT = require("jsonwebtoken");
+/* eslint-disable no-undef */
+import { verify } from "jsonwebtoken";
 
 const requireSignIn = async (req, res, next) => {
   try {
     // token is inside header
-    const decode = JWT.verify(
-      req.headers.authorization,
-      process.env.SECRET_KEY
-    );
+    const decode = verify(req.headers.authorization, process.env.SECRET_KEY);
     req.user = decode;
     next();
   } catch (error) {
@@ -18,4 +16,4 @@ const requireSignIn = async (req, res, next) => {
   }
 };
 
-module.exports = { requireSignIn };
+export default { requireSignIn };

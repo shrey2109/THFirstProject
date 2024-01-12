@@ -1,10 +1,7 @@
 const express = require("express");
-const {
-  allUserInfoController,
-  registerController,
-  loginController,
-} = require("../controllers/authController");
-const { requireSignIn } = require("../middlewares/authMiddleware");
+const { allUserInfoController, registerController, loginController } =
+  require("../controllers/authController").default;
+const { requireSignIn } = require("../middlewares/authMiddleware").default;
 
 const router = express.Router();
 
