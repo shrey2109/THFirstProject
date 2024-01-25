@@ -123,9 +123,10 @@ const remove = async (req, res, next) => {
         visitor.id === comment.authorId ||
         visitor.id === postAuthor.id ||
         visitor.id === postAuthor.managerId ||
-        visitor.id === commentAuthor.managerId ||
-        (commentAuthor.role === "SUPERUSER" && postAuthor.role !== "SUPERUSER")
-      )
+        visitor.id === commentAuthor.managerId
+      ) &&
+      commentAuthor.role === "SUPERUSER" &&
+      postAuthor.role !== "SUPERUSER"
     ) {
       res.status(401).send({
         success: false,
