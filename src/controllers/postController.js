@@ -69,11 +69,14 @@ const update = async (req, res, next) => {
 
     const postAuthor = await findHelper.findUser(post.authorId);
 
-    if (!(post.authorId === visitor.id || postAuthor.managerId === visitor.id))
+    if (!(post.authorId === visitor.id || postAuthor.managerId === visitor.id)){
+
       res.status(401).send({
         success: false,
         message: "User is not authorized to perform this action",
       });
+      return;
+    }
 
     let updatePost;
     if (dataToBeUpdated.title) {

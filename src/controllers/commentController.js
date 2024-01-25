@@ -71,13 +71,20 @@ const update = async (req, res, next) => {
       });
     }
 
-    const author = await findHelper.findUser(parseInt(comment.authorId));
+    const commentAuthor = await findHelper.findUser(parseInt(comment.authorId));
 
-    if (!(comment.authorId === visitor.id || author.managerId === visitor.id))
+    if (
+      !(
+        comment.authorId === visitor.id ||
+        commentAuthor.managerId === visitor.id
+      )
+    ) {
       res.status(401).send({
         success: false,
         message: "User is not authorized to perform this action",
       });
+      return;
+    }
 
     const updateComment = await prisma.comment.update({
       where: {
@@ -107,8 +114,8 @@ const remove = async (req, res, next) => {
       });
     }
 
-    const postAuthor = await findHelper.findPost(parseInt(comment.postId));
-    const commentAuthor = await findHelper.findComment(commentId);
+    const postAuthor = await findHelper.findUser(parseInt(comment.postId));
+    const commentAuthor = await findHelper.findUser(parseInt(comment.authorId));
 
     if (
       !(
@@ -124,6 +131,7 @@ const remove = async (req, res, next) => {
         success: false,
         message: "User is not authorized to perform this action",
       });
+      return;
     }
 
     const deleteComment = await prisma.comment.delete({
