@@ -1,6 +1,6 @@
 import authHelper from "../utils/authHelper.js";
 import JWT from "jsonwebtoken";
-import authValidation from "../utils/validation.js";
+import validation from "../utils/validation.js";
 import prisma from "../utils/prismaClient.js";
 
 const allUserInfo = async (req, res, next) => {
@@ -16,15 +16,15 @@ const allUserInfo = async (req, res, next) => {
 const register = async (req, res, next) => {
   try {
     // Validation
-    const isValid = authValidation.registerValidate(req.body);
+    const isValid = validation.registerValidate(req.body);
     if (!isValid.success) return res.status(400).send(isValid.message);
 
-    const { firstName, lastName, userEmail, password, contactNumber } =
+    const { firstName, lastName, email, password, contactNumber } =
       req.body;
 
     const existingUser = await prisma.user.findUnique({
       where: {
-        userEmail: userEmail,
+        email: email,
       },
     });
     if (existingUser) {
@@ -40,7 +40,7 @@ const register = async (req, res, next) => {
       data: {
         firstName: firstName,
         lastName: lastName,
-        userEmail: userEmail,
+        email: email,
         password: newHashedPassword,
         contactNumber: contactNumber,
       },
@@ -54,14 +54,14 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     // Validation
-    const isValid = authValidation.loginValidate(req.body);
+    const isValid = validation.loginValidate(req.body);
     if (!isValid.success) return res.send(isValid);
 
-    const { userEmail, password } = req.body;
+    const { email, password } = req.body;
 
     const existingUser = await prisma.user.findUnique({
       where: {
-        userEmail: userEmail,
+        email: email,
       },
     });
 

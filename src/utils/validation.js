@@ -33,4 +33,39 @@ const loginValidate = (data) => {
   };
 };
 
-export default { registerValidate, loginValidate };
+const postValidate = (data) => {
+  const validate = ajv.compile(ajvSchema.postSchema);
+  const valid = validate(data);
+  if (!valid)
+    return {
+      success: false,
+      message: validate.errors,
+    };
+
+  return {
+    success: true,
+    message: "All OK",
+  };
+};
+
+const commentValidate = (data) => {
+  const validate = ajv.compile(ajvSchema.commentSchema);
+  const valid = validate(data);
+  if (!valid)
+    return {
+      success: false,
+      message: validate.errors,
+    };
+
+  return {
+    success: true,
+    message: "All OK",
+  };
+};
+
+export default {
+  registerValidate,
+  loginValidate,
+  postValidate,
+  commentValidate,
+};
