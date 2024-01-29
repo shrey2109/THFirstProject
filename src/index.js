@@ -2,6 +2,7 @@ import express from "express";
 import authRouter from "./routers/authRouter.js";
 import postRouter from "./routers/postRouter.js";
 import commentRouter from "./routers/commentRouter.js";
+import adminRouter from "./routers/adminRouter.js";
 import dotenv from "dotenv";
 import errorHandler from "./middlewares/errorHandler.js";
 
@@ -13,6 +14,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
+app.use("/api/admin", adminRouter);
 app.use("/api/post", postRouter);
 app.use("/api/comment", commentRouter);
 

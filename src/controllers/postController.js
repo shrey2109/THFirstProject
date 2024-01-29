@@ -21,7 +21,7 @@ const create = async (req, res, next) => {
       },
     });
 
-    res.status(200).send({ success: true, message: post });
+    return res.status(201).send({ success: true, message: post });
   } catch (error) {
     next(error);
   }
@@ -31,7 +31,7 @@ const create = async (req, res, next) => {
 const allPosts = async (req, res, next) => {
   try {
     const posts = await prisma.post.findMany();
-    res.status(200).send({ success: true, message: posts });
+    return res.status(200).send({ success: true, message: posts });
   } catch (error) {
     next(error);
   }
@@ -42,8 +42,8 @@ const getPost = async (req, res, next) => {
   try {
     const postId = parseInt(req.params.id);
     const post = await findHelper.findPost(postId);
-    if (post) res.status(200).send({ success: true, message: post });
-    res.status(200).send({
+    if (post) return res.status(200).send({ success: true, message: post });
+    return res.status(404).send({
       success: false,
       message: "No post available for particular post id",
     });
@@ -61,7 +61,7 @@ const update = async (req, res, next) => {
 
     const post = await findHelper.findPost(postId);
     if (!post) {
-      res.status(200).send({
+      return res.status(404).send({
         success: false,
         message: "No post available for particular post id",
       });
@@ -69,15 +69,19 @@ const update = async (req, res, next) => {
 
     const postAuthor = await findHelper.findUser(post.authorId);
 
-    if (!(post.authorId === visitor.id || postAuthor.managerId === visitor.id)){
-
-      res.status(401).send({
+    if (
+      !(post.authorId === visitor.id || postAuthor.managerId === visitor.id)
+    ) {
+      return res.status(401).send({
         success: false,
         message: "User is not authorized to perform this action",
       });
-      return;
     }
 
+    if (!dataToBeUpdated.title || !dataToBeUpdated.description)
+      return res
+        .status(200)
+        .send({ success: true, message: "Please provide data for update" });
     let updatePost;
     if (dataToBeUpdated.title) {
       updatePost = await prisma.post.update({
@@ -99,7 +103,7 @@ const update = async (req, res, next) => {
         },
       });
     }
-    res.status(200).send({ success: true, message: updatePost });
+    return res.status(200).send({ success: true, message: updatePost });
   } catch (error) {
     next(error);
   }
@@ -113,7 +117,7 @@ const remove = async (req, res, next) => {
 
     const post = await findHelper.findPost(postId);
     if (!post) {
-      res.status(200).send({
+      return res.status(404).send({
         success: false,
         message: "No post available for particular post id",
       });
@@ -128,11 +132,10 @@ const remove = async (req, res, next) => {
         postAuthor.managerId === visitor.id
       )
     ) {
-      res.status(401).send({
+      return res.status(401).send({
         success: false,
         message: "User is not authorized to perform this action",
       });
-      return;
     }
 
     const deletePost = await prisma.post.delete({
@@ -141,7 +144,7 @@ const remove = async (req, res, next) => {
       },
     });
 
-    res.status(200).send({ success: true, message: deletePost });
+    return res.status(200).send({ success: true, message: deletePost });
   } catch (error) {
     next(error);
   }

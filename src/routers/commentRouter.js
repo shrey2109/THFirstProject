@@ -18,7 +18,7 @@ router.get("/comments", commentController.allComments);
 router.get("/comment/:commentId", commentController.getComment);
 
 // update a Comment
-router.put(
+router.patch(
   "/comment/:commentId",
   authMiddleware.ensureLogin,
   commentController.update

@@ -6,7 +6,7 @@ import prisma from "../utils/prismaClient.js";
 const allUserInfo = async (req, res, next) => {
   try {
     const users = await prisma.user.findMany();
-    res.status(200).send({ success: true, message: users });
+    return res.status(200).send({ success: true, message: users });
   } catch (error) {
     // This will call errorHandler middleware.
     next(error);
@@ -19,8 +19,7 @@ const register = async (req, res, next) => {
     const isValid = validation.registerValidate(req.body);
     if (!isValid.success) return res.status(400).send(isValid.message);
 
-    const { firstName, lastName, email, password, contactNumber } =
-      req.body;
+    const { firstName, lastName, email, password, contactNumber } = req.body;
 
     const existingUser = await prisma.user.findUnique({
       where: {
@@ -45,7 +44,7 @@ const register = async (req, res, next) => {
         contactNumber: contactNumber,
       },
     });
-    res.status(200).send({ success: true, message: newUser });
+    return res.status(201).send({ success: true, message: newUser });
   } catch (error) {
     next(error);
   }
@@ -66,7 +65,7 @@ const login = async (req, res, next) => {
     });
 
     if (!existingUser) {
-      res
+      return res
         .status(404)
         .send({ status: false, message: "User Information not found" });
     }
@@ -77,7 +76,9 @@ const login = async (req, res, next) => {
     );
 
     if (!checkPassword) {
-      res.status(422).send({ status: false, message: "Incorrect Password" });
+      return res
+        .status(422)
+        .send({ status: false, message: "Incorrect Password" });
     }
 
     // eslint-disable-next-line no-undef
@@ -85,7 +86,7 @@ const login = async (req, res, next) => {
       expiresIn: "7d",
     });
 
-    res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "Login Successfully",
       existingUser,

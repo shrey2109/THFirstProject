@@ -11,11 +11,24 @@ const ensureLogin = async (req, res, next) => {
     req.user = decode;
     next();
   } catch (error) {
-    res.status(401).send({
+    return res.status(401).send({
       success: false,
       message: "User is not Authorized",
     });
   }
 };
 
-export default {ensureLogin};
+const ensureAdmin = async (req, res, next) => {
+  try {
+    const user = req.user;
+    if (user.role === "SUPERUSER") next();
+    else throw new Error("No admin");
+  } catch (error) {
+    return res.status(401).send({
+      success: false,
+      message: "User does not have admin rights.",
+    });
+  }
+};
+
+export default { ensureLogin, ensureAdmin };

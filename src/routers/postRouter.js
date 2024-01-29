@@ -18,7 +18,7 @@ router.get("/posts", postController.allPosts);
 router.get("/post/:id", postController.getPost);
 
 // update a post
-router.put("/post/:id", authMiddleware.ensureLogin, postController.update);
+router.patch("/post/:id", authMiddleware.ensureLogin, postController.update);
 
 // delete a post
 router.delete(

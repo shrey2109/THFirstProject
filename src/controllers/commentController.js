@@ -25,7 +25,7 @@ const create = async (req, res, next) => {
       },
     });
 
-    res.status(200).send({ success: true, message: comment });
+    return res.status(201).send({ success: true, message: comment });
   } catch (error) {
     next(error);
   }
@@ -35,7 +35,7 @@ const create = async (req, res, next) => {
 const allComments = async (req, res, next) => {
   try {
     const comments = await prisma.comment.findMany();
-    res.status(200).send({ success: true, message: comments });
+    return res.status(200).send({ success: true, message: comments });
   } catch (error) {
     next(error);
   }
@@ -46,8 +46,9 @@ const getComment = async (req, res, next) => {
   try {
     const commentId = parseInt(req.params.commentId);
     const comment = await findHelper.findComment(commentId);
-    if (comment) res.status(200).send({ success: true, message: comment });
-    res.status(200).send({
+    if (comment)
+      return res.status(200).send({ success: true, message: comment });
+    return res.status(404).send({
       success: false,
       message: "No Comment is available for particular comment id",
     });
@@ -65,7 +66,7 @@ const update = async (req, res, next) => {
 
     const comment = await findHelper.findComment(commentId);
     if (!comment) {
-      res.status(200).send({
+      return res.status(404).send({
         success: false,
         message: "No Comment is available for particular comment id",
       });
@@ -79,12 +80,17 @@ const update = async (req, res, next) => {
         commentAuthor.managerId === visitor.id
       )
     ) {
-      res.status(401).send({
+      return res.status(401).send({
         success: false,
         message: "User is not authorized to perform this action",
       });
-      return;
     }
+
+    if (!dataToBeUpdated.description)
+      return res.status(200).send({
+        success: true,
+        message: "Please provide data to update comment",
+      });
 
     const updateComment = await prisma.comment.update({
       where: {
@@ -94,7 +100,7 @@ const update = async (req, res, next) => {
         description: dataToBeUpdated.description,
       },
     });
-    res.status(200).send({ success: true, message: updateComment });
+    return res.status(200).send({ success: true, message: updateComment });
   } catch (error) {
     next(error);
   }
@@ -108,7 +114,7 @@ const remove = async (req, res, next) => {
 
     const comment = await findHelper.findComment(commentId);
     if (!comment) {
-      res.status(200).send({
+      return res.status(404).send({
         success: false,
         message: "No Comment is available for particular comment id",
       });
@@ -128,11 +134,10 @@ const remove = async (req, res, next) => {
       commentAuthor.role === "SUPERUSER" &&
       postAuthor.role !== "SUPERUSER"
     ) {
-      res.status(401).send({
+      return res.status(401).send({
         success: false,
         message: "User is not authorized to perform this action",
       });
-      return;
     }
 
     const deleteComment = await prisma.comment.delete({
@@ -141,7 +146,7 @@ const remove = async (req, res, next) => {
       },
     });
 
-    res.status(200).send({ success: true, message: deleteComment });
+    return res.status(200).send({ success: true, message: deleteComment });
   } catch (error) {
     next(error);
   }
