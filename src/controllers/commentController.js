@@ -13,6 +13,14 @@ const create = async (req, res, next) => {
     const author = req.user;
     const postId = parseInt(req.params.postId);
 
+    const post = await findHelper.findPost(postId);
+    if (!post) {
+      return res.status(404).send({
+        success: false,
+        message: "No post is available for particular post id",
+      });
+    }
+
     const comment = await prisma.comment.create({
       data: {
         description,
