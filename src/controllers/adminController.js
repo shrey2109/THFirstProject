@@ -90,6 +90,13 @@ const allocateManager = async (req, res, next) => {
       });
     }
 
+    if (userId === managerId) {
+      return res.status(406).send({
+        success: false,
+        message: "Can not self assign manager.",
+      });
+    }
+
     if (user.managerId === managerId) {
       return res.status(200).send({
         success: true,
