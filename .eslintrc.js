@@ -6,8 +6,8 @@ module.exports = {
   },
   extends: [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended",
+    // "plugin:@typescript-eslint/recommended",
+    // "plugin:react/recommended",
   ],
   overrides: [
     {
@@ -24,11 +24,16 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
   },
-  plugins: ["@typescript-eslint", "react"],
+  // plugins: ["@typescript-eslint", "react"],
   rules: {
     indent: ["error", 2],
     "linebreak-style": ["error", "windows"],
     quotes: ["error", "double"],
     semi: ["error", "always"],
   },
+  // settings: {
+  //   react: {
+  //     version: "detect",
+  //   },
+  // },
 };

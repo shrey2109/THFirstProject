@@ -78,7 +78,7 @@ const update = async (req, res, next) => {
       });
     }
 
-    if (!dataToBeUpdated.title || !dataToBeUpdated.description)
+    if (!dataToBeUpdated.title && !dataToBeUpdated.description)
       return res
         .status(200)
         .send({ success: true, message: "Please provide data for update" });

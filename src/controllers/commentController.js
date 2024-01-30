@@ -124,15 +124,12 @@ const remove = async (req, res, next) => {
     const commentAuthor = await findHelper.findUser(parseInt(comment.authorId));
 
     if (
-      !(
-        visitor.role === "SUPERUSER" ||
-        visitor.id === comment.authorId ||
-        visitor.id === postAuthor.id ||
-        visitor.id === postAuthor.managerId ||
-        visitor.id === commentAuthor.managerId
-      ) &&
-      commentAuthor.role === "SUPERUSER" &&
-      postAuthor.role !== "SUPERUSER"
+      (visitor.role !== "SUPERUSER" &&
+        visitor.id !== comment.authorId &&
+        visitor.id !== postAuthor.id &&
+        visitor.id !== postAuthor.managerId &&
+        visitor.id !== commentAuthor.managerId) ||
+      (commentAuthor.role === "SUPERUSER" && visitor.role !== "SUPERUSER")
     ) {
       return res.status(401).send({
         success: false,

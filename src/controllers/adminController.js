@@ -90,6 +90,13 @@ const allocateManager = async (req, res, next) => {
       });
     }
 
+    if (user.managerId === managerId) {
+      return res.status(200).send({
+        success: true,
+        message: "This manager is already assigned to the user.",
+      });
+    }
+
     const updatedUser = await prisma.user.update({
       where: {
         id: userId,
@@ -113,6 +120,13 @@ const deallocateManager = async (req, res, next) => {
       return res.status(404).send({
         status: false,
         message: "User Information not found for userId",
+      });
+    }
+
+    if (user.managerId === null) {
+      return res.status(200).send({
+        success: true,
+        message: "Already no manager assigned to this user",
       });
     }
 
