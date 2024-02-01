@@ -6,27 +6,27 @@ const router = express.Router();
 
 // create a Comment
 router.post(
-  "/:postId/createComment",
+  "/:postId",
   authMiddleware.ensureLogin,
   commentController.create
 );
 
 // get all Comments
-router.get("/comments", commentController.allComments);
+router.get("/", commentController.allComments);
 
 // get a particular Comment
-router.get("/comment/:commentId", commentController.getComment);
+router.get("/:commentId", commentController.getComment);
 
 // update a Comment
 router.patch(
-  "/comment/:commentId",
+  "/:commentId",
   authMiddleware.ensureLogin,
   commentController.update
 );
 
 // delete a Comment
 router.delete(
-  "/comment/:commentId",
+  "/:commentId",
   authMiddleware.ensureLogin,
   commentController.remove
 );

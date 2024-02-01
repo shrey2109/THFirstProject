@@ -15,8 +15,8 @@ app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminRouter);
-app.use("/api/post", postRouter);
-app.use("/api/comment", commentRouter);
+app.use("/api/posts", postRouter);
+app.use("/api/comments", commentRouter);
 
 app.use(errorHandler);
 

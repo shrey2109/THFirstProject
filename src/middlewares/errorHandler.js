@@ -1,10 +1,10 @@
-const errorHandler = (err, req, res) => {
+// eslint-disable-next-line
+const errorHandler = (err, req, res, next) => {
   const errStatus = err.statusCode || 400;
   const errMsg = err.message || "Something went wrong";
   return res.status(errStatus).json({
-    success: false,
-    status: errStatus,
-    message: errMsg,
+    data:"",
+    error: errMsg,
   });
 };
 

@@ -1,8 +1,18 @@
 import Ajv from "ajv";
+const ajv = new Ajv({ allErrors: true });
+import ajvErrors from "ajv-errors";
+ajvErrors(ajv);
+
 import ajvSchema from "./ajvSchema.js";
-const ajv = new Ajv();
 import addFormats from "ajv-formats";
 addFormats(ajv);
+
+const fetchErrors = (errors) => {
+  const errArr = errors.map((e) => {
+    return e.message;
+  });
+  return errArr.join(" | ");
+};
 
 const registerValidate = (data) => {
   const validate = ajv.compile(ajvSchema.registerSchema);
@@ -10,7 +20,7 @@ const registerValidate = (data) => {
   if (!valid)
     return {
       success: false,
-      message: validate.errors,
+      message: fetchErrors(validate.errors),
     };
   return {
     success: true,
@@ -24,7 +34,7 @@ const loginValidate = (data) => {
   if (!valid)
     return {
       success: false,
-      message: validate.errors,
+      message: fetchErrors(validate.errors),
     };
 
   return {
@@ -39,7 +49,7 @@ const postValidate = (data) => {
   if (!valid)
     return {
       success: false,
-      message: validate.errors,
+      message: fetchErrors(validate.errors),
     };
 
   return {
@@ -54,7 +64,7 @@ const commentValidate = (data) => {
   if (!valid)
     return {
       success: false,
-      message: validate.errors,
+      message: fetchErrors(validate.errors),
     };
 
   return {

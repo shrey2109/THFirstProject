@@ -7,7 +7,8 @@ const create = async (req, res, next) => {
   try {
     // Validation
     const isValid = validation.commentValidate(req.body);
-    if (!isValid.success) return res.status(400).send(isValid.message);
+    if (!isValid.success)
+      return res.status(400).send({ data: "", error: isValid.message });
 
     const { description } = req.body;
     const author = req.user;
@@ -16,8 +17,8 @@ const create = async (req, res, next) => {
     const post = await findHelper.findPost(postId);
     if (!post) {
       return res.status(404).send({
-        success: false,
-        message: "No post is available for particular post id",
+        data: "",
+        error: "No post is available for particular post id",
       });
     }
 
@@ -33,7 +34,7 @@ const create = async (req, res, next) => {
       },
     });
 
-    return res.status(201).send({ success: true, message: comment });
+    return res.status(201).send({ data: comment, error: "" });
   } catch (error) {
     next(error);
   }
@@ -43,7 +44,7 @@ const create = async (req, res, next) => {
 const allComments = async (req, res, next) => {
   try {
     const comments = await prisma.comment.findMany();
-    return res.status(200).send({ success: true, message: comments });
+    return res.status(200).send({ data: comments, error: "" });
   } catch (error) {
     next(error);
   }
@@ -54,11 +55,10 @@ const getComment = async (req, res, next) => {
   try {
     const commentId = parseInt(req.params.commentId);
     const comment = await findHelper.findComment(commentId);
-    if (comment)
-      return res.status(200).send({ success: true, message: comment });
+    if (comment) return res.status(200).send({ data: comment, error: "" });
     return res.status(404).send({
-      success: false,
-      message: "No Comment is available for particular comment id",
+      data: "",
+      error: "No Comment is available for particular comment id",
     });
   } catch (error) {
     next(error);
@@ -75,8 +75,8 @@ const update = async (req, res, next) => {
     const comment = await findHelper.findComment(commentId);
     if (!comment) {
       return res.status(404).send({
-        success: false,
-        message: "No Comment is available for particular comment id",
+        data: "",
+        error: "No Comment is available for particular comment id",
       });
     }
 
@@ -89,15 +89,15 @@ const update = async (req, res, next) => {
       )
     ) {
       return res.status(401).send({
-        success: false,
-        message: "User is not authorized to perform this action",
+        data: "",
+        error: "User is not authorized to perform this action",
       });
     }
 
     if (!dataToBeUpdated.description)
-      return res.status(200).send({
-        success: true,
-        message: "Please provide data to update comment",
+      return res.status(409).send({
+        data: "",
+        error: "Please provide data to update comment",
       });
 
     const updateComment = await prisma.comment.update({
@@ -106,9 +106,10 @@ const update = async (req, res, next) => {
       },
       data: {
         description: dataToBeUpdated.description,
+        updatedAt: new Date().toISOString(),
       },
     });
-    return res.status(200).send({ success: true, message: updateComment });
+    return res.status(200).send({ data: updateComment, error: "" });
   } catch (error) {
     next(error);
   }
@@ -123,8 +124,8 @@ const remove = async (req, res, next) => {
     const comment = await findHelper.findComment(commentId);
     if (!comment) {
       return res.status(404).send({
-        success: false,
-        message: "No Comment is available for particular comment id",
+        data: "",
+        error: "No Comment is available for particular comment id",
       });
     }
 
@@ -140,18 +141,18 @@ const remove = async (req, res, next) => {
       (commentAuthor.role === "SUPERUSER" && visitor.role !== "SUPERUSER")
     ) {
       return res.status(401).send({
-        success: false,
+        data: "",
         message: "User is not authorized to perform this action",
       });
     }
 
-    const deleteComment = await prisma.comment.delete({
+    await prisma.comment.delete({
       where: {
         id: commentId,
       },
     });
 
-    return res.status(200).send({ success: true, message: deleteComment });
+    return res.status(200).send({ data: "The comment is deleted", error: "" });
   } catch (error) {
     next(error);
   }

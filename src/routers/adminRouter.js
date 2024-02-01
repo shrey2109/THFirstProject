@@ -4,35 +4,20 @@ import adminController from "../controllers/adminController.js";
 
 const router = express.Router();
 
-// Update user role
+// Allocate role/manager to user
 router.patch(
-  "/addSuperUser/:id",
+  "/allocate/:id",
   authMiddleware.ensureLogin,
   authMiddleware.ensureAdmin,
-  adminController.addSuperUser
+  adminController.allocate
 );
 
+// Deallocate role/manager to user
 router.patch(
-  "/removeSuperUser/:id",
+  "/deallocate/:id",
   authMiddleware.ensureLogin,
   authMiddleware.ensureAdmin,
-  adminController.removeSuperUser
-);
-
-// Allocate manager to a user
-router.patch(
-  "/allocateManager/:userId/:managerId",
-  authMiddleware.ensureLogin,
-  authMiddleware.ensureAdmin,
-  adminController.allocateManager
-);
-
-// Deallocate manager from user
-router.patch(
-  "/deallocateManager/:userId",
-  authMiddleware.ensureLogin,
-  authMiddleware.ensureAdmin,
-  adminController.deallocateManager
+  adminController.deallocate
 );
 
 export default router;

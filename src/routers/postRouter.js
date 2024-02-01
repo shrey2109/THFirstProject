@@ -5,26 +5,18 @@ import authMiddleware from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 // create a post
-router.post(
-  "/createPost",
-  authMiddleware.ensureLogin,
-  postController.create
-);
+router.post("/", authMiddleware.ensureLogin, postController.create);
 
 // get all posts
-router.get("/posts", postController.allPosts);
+router.get("/", postController.allPosts);
 
 // get a particular post
-router.get("/post/:id", postController.getPost);
+router.get("/:id", postController.getPost);
 
 // update a post
-router.patch("/post/:id", authMiddleware.ensureLogin, postController.update);
+router.patch("/:id", authMiddleware.ensureLogin, postController.update);
 
 // delete a post
-router.delete(
-  "/post/:id",
-  authMiddleware.ensureLogin,
-  postController.remove
-);
+router.delete("/:id", authMiddleware.ensureLogin, postController.remove);
 
 export default router;

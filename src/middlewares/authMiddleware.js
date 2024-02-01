@@ -12,8 +12,8 @@ const ensureLogin = async (req, res, next) => {
     next();
   } catch (error) {
     return res.status(401).send({
-      success: false,
-      message: "User is not Authorized",
+      data: "",
+      error: "User is not Authorized",
     });
   }
 };
@@ -25,8 +25,8 @@ const ensureAdmin = async (req, res, next) => {
     else throw new Error("No admin");
   } catch (error) {
     return res.status(401).send({
-      success: false,
-      message: "User does not have admin rights.",
+      data: "",
+      error: "User does not have admin rights.",
     });
   }
 };

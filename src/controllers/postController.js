@@ -7,7 +7,8 @@ const create = async (req, res, next) => {
   try {
     // validation
     const isValid = validation.postValidate(req.body);
-    if (!isValid.success) return res.status(400).send(isValid.message);
+    if (!isValid.success)
+      return res.status(400).send({ data: "", error: isValid.message });
 
     const { title, description } = req.body;
     const author = req.user;
@@ -21,7 +22,7 @@ const create = async (req, res, next) => {
       },
     });
 
-    return res.status(201).send({ success: true, message: post });
+    return res.status(201).send({ data: post, error: "" });
   } catch (error) {
     next(error);
   }
@@ -31,7 +32,7 @@ const create = async (req, res, next) => {
 const allPosts = async (req, res, next) => {
   try {
     const posts = await prisma.post.findMany();
-    return res.status(200).send({ success: true, message: posts });
+    return res.status(200).send({ data: posts, error: "" });
   } catch (error) {
     next(error);
   }
@@ -42,10 +43,10 @@ const getPost = async (req, res, next) => {
   try {
     const postId = parseInt(req.params.id);
     const post = await findHelper.findPost(postId);
-    if (post) return res.status(200).send({ success: true, message: post });
+    if (post) return res.status(200).send({ data: post, error: "" });
     return res.status(404).send({
-      success: false,
-      message: "No post available for particular post id",
+      data: "",
+      error: "No post available for particular post id",
     });
   } catch (error) {
     next(error);
@@ -62,8 +63,8 @@ const update = async (req, res, next) => {
     const post = await findHelper.findPost(postId);
     if (!post) {
       return res.status(404).send({
-        success: false,
-        message: "No post available for particular post id",
+        data: "",
+        error: "No post available for particular post id",
       });
     }
 
@@ -73,15 +74,15 @@ const update = async (req, res, next) => {
       !(post.authorId === visitor.id || postAuthor.managerId === visitor.id)
     ) {
       return res.status(401).send({
-        success: false,
-        message: "User is not authorized to perform this action",
+        data: "",
+        error: "User is not authorized to perform this action",
       });
     }
 
     if (!dataToBeUpdated.title && !dataToBeUpdated.description)
       return res
-        .status(200)
-        .send({ success: true, message: "Please provide data for update" });
+        .status(400)
+        .send({ data: "", error: "Please provide data for update" });
     let updatePost;
     if (dataToBeUpdated.title) {
       updatePost = await prisma.post.update({
@@ -90,6 +91,7 @@ const update = async (req, res, next) => {
         },
         data: {
           title: dataToBeUpdated.title,
+          updatedAt: new Date().toISOString(),
         },
       });
     }
@@ -100,10 +102,11 @@ const update = async (req, res, next) => {
         },
         data: {
           description: dataToBeUpdated.description,
+          updatedAt: new Date().toISOString(),
         },
       });
     }
-    return res.status(200).send({ success: true, message: updatePost });
+    return res.status(200).send({ data: updatePost, error: "" });
   } catch (error) {
     next(error);
   }
@@ -118,8 +121,8 @@ const remove = async (req, res, next) => {
     const post = await findHelper.findPost(postId);
     if (!post) {
       return res.status(404).send({
-        success: false,
-        message: "No post available for particular post id",
+        data: "",
+        error: "No post available for particular post id",
       });
     }
 
@@ -133,18 +136,18 @@ const remove = async (req, res, next) => {
       )
     ) {
       return res.status(401).send({
-        success: false,
-        message: "User is not authorized to perform this action",
+        data: "",
+        error: "User is not authorized to perform this action",
       });
     }
 
-    const deletePost = await prisma.post.delete({
+    await prisma.post.delete({
       where: {
         id: postId,
       },
     });
 
-    return res.status(200).send({ success: true, message: deletePost });
+    return res.status(200).send({ data: "The post is deleted", error: "" });
   } catch (error) {
     next(error);
   }
